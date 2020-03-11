@@ -1,0 +1,5 @@
+e_null_path = "¡¡No a cargado el archivo: "
+e_fake_path = "¡¡El archivo cargado no corresponde: "
+e_null_sheet = "¡¡No ha ingresado el nombre de la hoja [libro : "
+e_fake_sheet = "¡¡Nombre de hoja incorrecto [Libro: "
+e_nov_failed = "¡¡Algo ha fallado en: "
