@@ -11,11 +11,14 @@ def read_file(path,sheetname):
 def write_file_dataframe(path,sheetname,dataframe):
     dataframe.to_excel(path,sheetname,columns=None,index=False,engine='openpyxl')
 
-def write_cell(path,sheetName,row,col,value):
+def write_cell(path,sheetName,columns,rows,values):
     wb = load_workbook(path)
     sheet = wb[sheetName]
-    sheet.cell(row = row,column = col, value = value)
-    wb.save(filename=path)
+    i=0
+    for element in values:
+        sheet.cell(row = rows[i],column = columns[i]). value = element
+        i=+1
+    wb.save(path)
 
 def create_DataFrame(columns):
     return pd.DataFrame(columns=columns)

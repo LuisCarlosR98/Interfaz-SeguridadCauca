@@ -2,4 +2,7 @@
 from controller.controller import CONTROLLER
 
 #aqui debe ir el metodo main
-control = CONTROLLER()
+def main():
+    control = CONTROLLER()
+
+main()
