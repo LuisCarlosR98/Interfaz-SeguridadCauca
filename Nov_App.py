@@ -1,8 +1,8 @@
 #arranque del programa
-from controller.controller import CONTROLLER
+from controller.controller import Controller
 
 #aqui debe ir el metodo main
 def main():
-    control = CONTROLLER()
+    control = Controller()
 
 main()

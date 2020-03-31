@@ -4,7 +4,7 @@ from tkinter import messagebox
 from views import errors as err
 
 #clase de la interfaz de usuario GUI
-class WINDOW:
+class Window:
     #contrustor de la clase WINDOW
     #parametros:(controlador)
     def __init__(self,control):
@@ -29,9 +29,9 @@ class WINDOW:
         lbl_sheet1=(Label(window,text="Nombre de la hoja (libro excel):")).place(x=350,y=50)
         lbl_sheet2=(Label(window,text="Nombre de la hoja (libro excel):")).place(x=325,y=120)
         ###Buttons
-        btn_path1=(Button(window,text="Explorar (NOVEDADES)",command=lambda:self.ReadFile(1))).place(x=190,y=48)
-        btn_path2=(Button(window,text="Explorar (TURNOS)",command=lambda:self.ReadFile(2))).place(x=180,y=118)
-        btn_path1=(Button(window,text="REGISTRAR NOVEDADES",font="italic",command=lambda:self.ExecuteModel())).place(x=200,y=190)
+        btn_path1=(Button(window,text="Explorar (NOVEDADES)",command=lambda:self.read_file(1))).place(x=190,y=48)
+        btn_path2=(Button(window,text="Explorar (TURNOS)",command=lambda:self.read_file(2))).place(x=180,y=118)
+        btn_path1=(Button(window,text="REGISTRAR NOVEDADES",font="italic",command=lambda:self.execute_model())).place(x=200,y=190)
         ###Entrys
         self.ent_seet1=Entry(window)
         self.ent_seet1.place(x=525,y=52)
@@ -40,7 +40,7 @@ class WINDOW:
         ###mainloop
         window.mainloop()
 
-    def ReadFile(self,num):
+    def read_file(self,num):
         filename = filedialog.askopenfilename(filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
         if num==1:
             self.path1 = filename
@@ -51,7 +51,7 @@ class WINDOW:
             self.lbl_path2.configure(text="Ruta del archivo: "+self.path2)
             self.lbl_path2.place(x=50,y=150)
 
-    def ExecuteModel(self):
+    def execute_model(self):
         if (self.path1 and self.path2)=="":
             if(self.path1 == ""):
                 messagebox.showinfo(message=err.e_null_path+"NOVEDADES", title="Carga de archivos")
@@ -66,8 +66,8 @@ class WINDOW:
                 if(self.sheet2==""):
                     messagebox.showinfo(message=err.e_null_sheet+"TURNOS", title="Cargar de archivos")
             else:
-                file_name = filedialog.asksaveasfilename(filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
-                res = self.control.ExecuteProcess(self.path1,self.sheet1,self.path2,self.sheet2,file_name)
+                file_name = filedialog.asksaveasfilename(filetypes = (("csv files","*.csv"),("all files","*.*")))
+                res = self.control.execute_process(self.path1,self.sheet1,self.path2,self.sheet2,file_name)
                 if(res):
                     messagebox.showinfo(message="La carga de novedades se completo correctamente", title="Carga de novedades")
                 else:

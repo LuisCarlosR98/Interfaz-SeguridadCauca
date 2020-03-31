@@ -26,8 +26,13 @@ def rls_novelty(novelty):
     if(novelty=="Ausencia"):
         return [1,"AU"]
     if(novelty=="Tiempo Extra"):
-        return [2,"TE"]
-    if(novelty=="Permiso"):
-        return [3,"PE"]
+        return [0,"TE"]
+    if(novelty=="Incapacidad"):
+        return [1,"IC"]
     if(novelty=="Salida antes"):
-        return [4,"SA"]
+        return [1,"SA"]
+
+def is_diurnal(hour):
+    if hour >= "06:00" and hour < "21:00":
+        return True
+    return False

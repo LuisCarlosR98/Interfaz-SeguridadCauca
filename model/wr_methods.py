@@ -1,112 +1,85 @@
 from model import calendar_methods as cl
+from model import person as prs
+from model import aux_methods as aux_m
 
+def exist_name(namGuard,persons):
+    for person in persons:
+        if(person.name==namGuard):
+            return person
+    return False
 
-def value_diurnal(hour):
-    if(hour>"21" or hour<"06"):
+def add_hours(person,hours,cod,day,month,hour_date,year):
+    limit = cl.limit_hour(hour_date)
+    print (hours,limit)
+    #sale del metodo cuando no haya horas para sumar
+    if(hours<=0):
         return 0
-    return 1
-
-def index_name(name,collection):
-  try:
-    i=0
-    for element in collection:
-        if(element[0]==name):
-            return i
-        i=+1
-    return -1
-  except:
-    return -1
-
-def index_type_hour(hour_date,day_date):
-    val_diurnal = value_diurnal(hour_date)
-    val_holiday = cl.value_holiday(day_date)
-    if(value_diurnal == 0 and value_holiday == 0):
-        return 2
-    if(value_diurnal == 0 and value_holiday == 1):
-        return 4
-    if(value_diurnal == 1 and value_holiday == 0):
-        return 1
-    if(value_diurnal == 1 and value_holiday == 1):
-        return 3
-
-def dif_hora(hour_date):
-    if (value_diurnal(hour_date)==1):
-        return 21 - hour_date
-    if (value_diurnal(hour_date)==0):
-        if hour_date==24:
-            hour_date=0
-        if hour_date>=0 and hour_date<6:
-            return 6 - hour_date
-        if hour_date>21 and hour_date<24:
-            return 30 - hour_date
-
-def sum_hours(cod_op,hours,hour_date,day):
-    result = [0,0,""]
-    return result
-
-#----------------------------------------------///////--------------------------------//////------------------------
-
-#metodo final
-def updateElement(cod_op,hours,day,hour_date,element):
-    while hours > 0:
-        #sacar numero de horas y Tipo
-        index = index_type_hour(hour_date,day)
-        #verificar si hay cambio de tipo de hora
-        #regresa un vector[contador,horas_restantes,dia_actual]
-        data_hours = sum_hours(cod_op,hours,hour_date,day)
-        #actualizar los parametros
-        hours = data_hours[1]
-        day = data_hours[2]
-        #agregar la hora en el campo correspondiente
-        element[index]=+data_hours[0]
-
-
-
-
-
-def updateLine(name,cod_op,hours,hour_date,day,collection,line):
-    index = index_name(name,collection)
-    if(index == -1):
-        line[0] = name
-        #editar linea
-        updateElement(cod_op,hours,day,hour_date,line)
-        #agregar linea
-        collection.append(element)
+    if aux_m.is_diurnal(hour_date):
+        if cl.is_holiday(day,month):
+            if(hours<=limit):
+                person.add_H_Fdiunrs(hours,cod)
+                return 0
+            person.add_H_Fdiunrs(limit,cod)
+        else:
+            if(hours<=limit):
+                print("nombre ",person.name,"ingresando horas:",hours)
+                person.add_H_diunrs(hours,cod)
+                return 0
+            print("nombre ",person.name,"ingresando limite:",limit)
+            person.add_H_diunrs(limit,cod)
+        return add_hours(person,cl.add_hour(hours,limit,1),cod,day,month,"21:00",year)
     else:
-        line = collection[index]
-        #editar linea
-        updateElement(cod_op,hours,day,hour_date,line)
-        #regresar linea
-        collection[index]=line
+        if cl.is_holiday(day,month):
+            if hours <= limit:
+                person.add_H_Fnocturns(hours,cod)
+                return 0
+            person.add_H_Fnocturns(limit,cod)
+        else:
+            if hours < limit:
+                print("nombre ",person.name,"ingresando horas nocturnas:",hours)
+                person.add_H_nocturns(hours,cod)
+                return 0
+            print("nombre ",person.name,"ingresando limite nocturnas:",limit)
+            person.add_H_nocturns(limit,cod)
+        hour_new = hour_date
+        if cl.is_change_day(hours,hour_date):
+            if cl.is_end_month(day,month,year):
+                day = "01"
+                month = cl.add_month(month)
+            else:
+                day = cl.add_day(day)
+            hour_new = "00:00"
+        else:
+            hour_new = "06:00"
 
-def updateNovelty(novelty,collection,element,cod_nov,cod_per):
-    #0: resta, 1:suma
-    if cod_per==0:#una persona
-        updateLine(novelty.GuarCausa,1,novelty.Hours,novelty.getDia(),novelty.getHour_Date(),collection,element)
-    if cod_per==1:#dos personas
-        if cod_nov != 3:
-            updateLine(novelty.GuarCausa,0,novelty.Hours,novelty.getDia(),novelty.getHour_Date(),collection,element)
-        updateLine(novelty.GuarCubre,1,novelty.Hours,novelty.getDia(),novelty.getHour_Date(),collection,element)
+        return add_hours(person,cl.add_hour(hours,limit,1),cod,day,month,"06:00",year)
 
-
-
-
-
-def generateElements(novelties):
-    res = list()
-    element = ["",0,0,0,0]
+def generate_hours(novelties):
+    persons = list()
     for novelty in novelties:
-        #verifica codigo de novedad
         cod_nov = novelty.getNov_cod()
-        if(cod_nov==1):
-            #dos nombres: Ausencia
-            cod_per=1
-        if(cod_nov==2):
-            #un nombre: Tiempo extra
-            cod_per=0
-        if(cod_nov==3):
-            #dos nombres: permiso
-            cod_per=0
-        if(cod_nov==4):
-            #dos nombres: Salida antes
-            cod_per=1
+        #Novedad con un solo actor
+        if cod_nov == 0:
+            person = exist_name(novelty.GuardCausa,persons)
+            if not person:
+                person = prs.Person(novelty.GuardCausa)
+            add_hours(person,novelty.Horas,1,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
+            persons.append(person)
+
+        #Novedad con dos actores
+        if cod_nov == 1:
+            #actor que resta horas
+            person = exist_name(novelty.GuardCausa,persons)
+            if not person:
+                person = prs.Person(novelty.GuardCausa)
+            add_hours(person,novelty.Horas,0,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
+            persons.append(person)
+
+            #actor que suma
+            person = exist_name(novelty.GuardCubre,persons)
+            if not person:
+                person = prs.Person(novelty.GuardCubre)
+            add_hours(person,novelty.Horas,1,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
+            persons.append(person)
+
+    return persons
