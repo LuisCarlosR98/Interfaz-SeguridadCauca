@@ -11,24 +11,33 @@ def read_file(path,sheetname):
 
 def write_file_dataframe(path,sheetname,dataframe):
     try:
-        print(path)
         dataframe.to_csv (path+'.csv', index = False)
         return True
     except Exception as e:
         return "Error: "+str(e)
 
-def write_cell(path,sheetName,columns,rows,values):
+def set_file_extension(path,oldExtension,newExtension):
+    if oldExtension in path:
+        newPath = path.replace(oldExtension,newExtension)
+        return newPath
+    else:
+        return False
+
+def write_dataframe(path,wb,columns,rows,values):
     try:
-        wb = load_workbook(path)
-        sheet = wb[sheetName]
-        i=0
-        for element in values:
-            sheet.cell(row = rows[i],column = columns[i]). value = element
-            i=+1
-        wb.save(path)
+        index=0
+        for value in values:
+            wb.values[rows[index]][columns[index]]=value
+            index=index+1
+        print(wb.values)
+        #Cambio de ruta
+        newPath = set_file_extension(path,"xlsx","csv")
+        wb.to_csv(newPath,index=False)
         return True
     except Exception as e:
+        #print(str(e))
         return "Error: "+str(e)
+
 
 def create_dataFrame(data):
     try:

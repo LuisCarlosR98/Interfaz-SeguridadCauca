@@ -1,26 +1,19 @@
 #metodos auxiliares
 import numpy as np
 #encuentra el nombre en el archivo de turnos
-def name_index(dataframe,nombre):
-    index=0
-    for element in dataframe.values:
-        if(element[0]==nombre):
-            break
-        index+=1
-
-    if index>=len(dataframe.values):
-        index = -1
-
-    return index+2
-
-def day_index(dataframe,day):
-    v_array = np.array(dataframe.columns.tolist())
+def name_index(nombres,nombre):
     try:
-        index = v_array.tolist().index(day)
-        return index+1
-    except:
-        index = -1
+        index=nombres.index(nombre)
         return index
+    except:
+        return -1
+
+def day_index(columns,day):
+    try:
+        index=columns.index(int(day))
+        return index
+    except:
+        return -1
 
 def rls_novelty(novelty):
     if(novelty=="Ausencia"):

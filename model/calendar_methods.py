@@ -3,11 +3,15 @@ locale.setlocale(locale.LC_ALL,"es_CO.UTF-8")
 import calendar as cl
 import holidays as hl
 from datetime import datetime
-import datetime as dt
 
 #devuelve 1 si es festivo o 0 si no es festivo
-def is_holiday(day_in,month):
-    co_holidays = hl.CO(years=2020)
+# Parametros: (dia String,mes String)
+def is_holiday(day_in,month,year):
+    str_date = month+"-"+day_in+"-"+year
+    date_wk = datetime.strptime(str_date,'%m-%d-%Y')
+    if (date_wk.weekday() == 6):
+        return True
+    co_holidays = hl.CO(years=int(year))
     for day in co_holidays.items():
         str_day= day[0].strftime("%d-%m-%Y")[0:2]
         str_month = day[0].strftime("%d-%m-%Y")[3:5]
@@ -15,8 +19,7 @@ def is_holiday(day_in,month):
             return True
     return False
 
-
-
+#limite de horas: diurnas, nocturnas, segun la hora de llegada
 def limit_hour(hours_date):
     hours = float(hours_date[0:2])
     minuts = float(hours_date[3:5])
@@ -34,11 +37,13 @@ def limit_hour(hours_date):
     if hours >= 6 and hours < 21:
         return (21-hours)+presicion
     else:
-        if hours < 6:
+        if hours >= 21:
+            return (24-hours)+presicion
+        if hours >= 0 and hours < 6:
             return (6-hours)+presicion
-        else:
-            return (24-hours+6)+presicion
 
+
+#si hay cambio de mes
 def is_end_month(day,month,year):
     #regresa true si un año es bisiesto
     if cl.isleap(int(year)):
@@ -55,6 +60,7 @@ def is_end_month(day,month,year):
             return True
     return False
 
+#indice, de una palabra dentro de una cadena
 def index_cad(cad, palabra):
     indice = 0
     while indice < len(palabra):
@@ -63,6 +69,7 @@ def index_cad(cad, palabra):
         indice += 1
     return -1
 
+#suma de minutos
 def sum_minuts(min1,min2):
     if min1+min2 < 60:
         res = "0."+str((min1 + min2))
@@ -71,6 +78,7 @@ def sum_minuts(min1,min2):
         res = "1."+str((min1 + min2)-60)
         return float(res)
 
+#reta de minutos
 def res_minuts(min1,min2):
     if min1 - min2 >= 0:
         res = "0."+str((min1 - min2))
@@ -93,13 +101,11 @@ def add_hour(hour1,hour2,cod):
 
     #suma hora1 + hora2
     if cod==0:
-        print(hour1," :suma: ",hour2)
         #sumamos los minutos
         min=sum_minuts(hr1_mt,hr2_mt)
         return (hr1_hr + hr2_hr) + min
     #resta hora1-hora2
     else:
-        print(hour1," :resta: ",hour2)
         if hour1==0.0:
             return -hour2
         if hour1<0:
@@ -114,12 +120,7 @@ def add_hour(hour1,hour2,cod):
             aux = str(int((hr1_hr-hr2_hr)-1.0))+str(res)[1:]
             return float(aux)
 
-hr1= 10.45
-lm = 4.15
-print(add_hour(hr1,lm,0))
-
-
-
+#avanzar un dia
 def add_day(day):
     day_aux = int(day)
     day_aux += 1
@@ -127,6 +128,7 @@ def add_day(day):
         return "0"+str(day_aux)
     return str(day_aux)
 
+#avanzar un mes
 def add_month(month):
     if month == "12":
         return "01"
@@ -136,6 +138,7 @@ def add_month(month):
         return "0"+str(month_aux)
     return str(month_aux)
 
+#si hay cambio de dia
 def is_change_day(hours,hours_date):
     aux = int(hours_date[0:2])
     if(hours+aux>24):

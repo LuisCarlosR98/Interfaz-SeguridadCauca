@@ -14,24 +14,21 @@ class Person:
             self.h_diurns = cl.add_hour(self.h_diurns,hr,0)
         else:
             self.h_diurns = cl.add_hour(self.h_diurns,hr,1)
-        print(self.h_diurns," :ope: ",hr," :: ",self.h_diurns)
 
     def add_H_nocturns(self, hr, cod):
         if cod == 1:
             self.h_nocturns = cl.add_hour(self.h_nocturns,hr,0)
         else:
             self.h_nocturns = cl.add_hour(self.h_nocturns,hr,1)
-        print(self.h_nocturns," :ope: ",hr," :: ",self.h_nocturns)
 
     def add_H_Fdiunrs(self, hr, cod):
-        print("horitas: "+hr)
         if cod == 1:
-            self.h_diurns = cl.add_hour(self.h_diurns,hr,0)
+            self.h_Fdiurns = cl.add_hour(self.h_Fdiurns,hr,0)
         else:
-            self.h_diurns = cl.add_hour(self.h_diurns,hr,1)
+            self.h_Fdiurns = cl.add_hour(self.h_Fdiurns,hr,1)
 
     def add_H_Fnocturns(self, hr, cod):
         if cod == 1:
-            self.h_diurns = cl.add_hour(self.h_diurns,hr,0)
+            self.h_Fnocturns = cl.add_hour(self.h_Fnocturns,hr,0)
         else:
-            self.h_diurns = cl.add_hour(self.h_diurns,hr,1)
+            self.h_Fnocturns = cl.add_hour(self.h_Fnocturns,hr,1)

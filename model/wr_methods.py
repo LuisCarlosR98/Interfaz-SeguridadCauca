@@ -10,38 +10,34 @@ def exist_name(namGuard,persons):
 
 def add_hours(person,hours,cod,day,month,hour_date,year):
     limit = cl.limit_hour(hour_date)
-    print (hours,limit)
     #sale del metodo cuando no haya horas para sumar
     if(hours<=0):
         return 0
     if aux_m.is_diurnal(hour_date):
-        if cl.is_holiday(day,month):
+        if cl.is_holiday(day,month,year):
             if(hours<=limit):
                 person.add_H_Fdiunrs(hours,cod)
                 return 0
             person.add_H_Fdiunrs(limit,cod)
         else:
             if(hours<=limit):
-                print("nombre ",person.name,"ingresando horas:",hours)
                 person.add_H_diunrs(hours,cod)
                 return 0
-            print("nombre ",person.name,"ingresando limite:",limit)
             person.add_H_diunrs(limit,cod)
         return add_hours(person,cl.add_hour(hours,limit,1),cod,day,month,"21:00",year)
     else:
-        if cl.is_holiday(day,month):
+        hour_new="06:00"
+        if cl.is_holiday(day,month,year):
             if hours <= limit:
                 person.add_H_Fnocturns(hours,cod)
                 return 0
             person.add_H_Fnocturns(limit,cod)
         else:
             if hours < limit:
-                print("nombre ",person.name,"ingresando horas nocturnas:",hours)
                 person.add_H_nocturns(hours,cod)
                 return 0
-            print("nombre ",person.name,"ingresando limite nocturnas:",limit)
             person.add_H_nocturns(limit,cod)
-        hour_new = hour_date
+
         if cl.is_change_day(hours,hour_date):
             if cl.is_end_month(day,month,year):
                 day = "01"
@@ -49,10 +45,10 @@ def add_hours(person,hours,cod,day,month,hour_date,year):
             else:
                 day = cl.add_day(day)
             hour_new = "00:00"
-        else:
-            hour_new = "06:00"
 
-        return add_hours(person,cl.add_hour(hours,limit,1),cod,day,month,"06:00",year)
+        hour_date = hour_new
+
+        return add_hours(person,cl.add_hour(hours,limit,1),cod,day,month,hour_date,year)
 
 def generate_hours(novelties):
     persons = list()
