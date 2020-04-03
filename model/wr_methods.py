@@ -8,6 +8,16 @@ def exist_name(namGuard,persons):
             return person
     return False
 
+def add_person(person,persons):
+    index = 0
+    while index < len(persons):
+        if persons[index].name == person.name:
+            persons[index]=person
+            return 0
+        index = index + 1
+    persons.append(person)
+
+
 def add_hours(person,hours,cod,day,month,hour_date,year):
     limit = cl.limit_hour(hour_date)
     #sale del metodo cuando no haya horas para sumar
@@ -60,7 +70,7 @@ def generate_hours(novelties):
             if not person:
                 person = prs.Person(novelty.GuardCausa)
             add_hours(person,novelty.Horas,1,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
-            persons.append(person)
+            add_person(person,persons)
 
         #Novedad con dos actores
         if cod_nov == 1:
@@ -69,13 +79,13 @@ def generate_hours(novelties):
             if not person:
                 person = prs.Person(novelty.GuardCausa)
             add_hours(person,novelty.Horas,0,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
-            persons.append(person)
+            add_person(person,persons)
 
             #actor que suma
             person = exist_name(novelty.GuardCubre,persons)
             if not person:
                 person = prs.Person(novelty.GuardCubre)
             add_hours(person,novelty.Horas,1,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
-            persons.append(person)
+            add_person(person,persons)
 
     return persons

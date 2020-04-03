@@ -1,5 +1,6 @@
 #metodos auxiliares
 import numpy as np
+
 #encuentra el nombre en el archivo de turnos
 def name_index(nombres,nombre):
     try:
