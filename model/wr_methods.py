@@ -63,13 +63,13 @@ def add_hours(person,hours,cod,day,month,hour_date,year):
 def generate_hours(novelties):
     persons = list()
     for novelty in novelties:
-        cod_nov = novelty.getNov_cod()
+        cod_nov = novelty.get_nov_cod()
         #Novedad con un solo actor
         if cod_nov == 0:
             person = exist_name(novelty.GuardCausa,persons)
             if not person:
                 person = prs.Person(novelty.GuardCausa)
-            add_hours(person,novelty.Horas,1,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
+            add_hours(person,novelty.Horas,1,novelty.get_day_start(),novelty.get_month_end(),novelty.get_hour_date(),novelty.get_year_start())
             add_person(person,persons)
 
         #Novedad con dos actores
@@ -78,14 +78,78 @@ def generate_hours(novelties):
             person = exist_name(novelty.GuardCausa,persons)
             if not person:
                 person = prs.Person(novelty.GuardCausa)
-            add_hours(person,novelty.Horas,0,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
+            add_hours(person,novelty.Horas,0,novelty.get_day_start(),novelty.get_month_end(),novelty.get_hour_date(),novelty.get_year_start())
             add_person(person,persons)
 
             #actor que suma
             person = exist_name(novelty.GuardCubre,persons)
             if not person:
                 person = prs.Person(novelty.GuardCubre)
-            add_hours(person,novelty.Horas,1,novelty.getDia(),novelty.getMonth(),novelty.getHour_Date(),novelty.getYear())
+            add_hours(person,novelty.Horas,1,novelty.get_day_start(),novelty.get_month_end(),novelty.get_hour_date(),novelty.get_year_start())
             add_person(person,persons)
 
     return persons
+
+def final_data(dataframe):
+    data = {'Nombre':[],
+        'H DIU-Positivas':[],
+        'H NOC-Positivas':[],
+        'FES DIU-Positivas':[],
+        'FES NOC-Positivas':[],
+        '--':[],
+        'H DIU-Negativas':[],
+        'H NOC-Negativas':[],
+        'FES DIU-Negativas':[],
+        'FES NOC-Negativas':[]}
+    names = dataframe.get("Nombre")
+    data['Nombre']=names
+    index=0
+    for name in names:
+        print(dataframe.values[index][1])
+        data['H DIU-Positivas'].append(str(dataframe.values[index][1]).replace(".",":") if dataframe.values[index][1]>0.0 else "00:00")
+        data['H NOC-Positivas'].append(str(dataframe.values[index][2]).replace(".",":") if dataframe.values[index][2]>0.0 else "00:00")
+        data['FES DIU-Positivas'].append(str(dataframe.values[index][3]).replace(".",":") if dataframe.values[index][3]>0.0 else "00:00")
+        data['FES NOC-Positivas'].append(str(dataframe.values[index][4]).replace(".",":") if dataframe.values[index][4]>0.0 else "00:00")
+        data['--'].append("--")
+        data['H DIU-Negativas'].append(str(dataframe.values[index][1]).replace(".",":").replace("-","") if dataframe.values[index][1]<0.0 else "00:00")
+        data['H NOC-Negativas'].append(str(dataframe.values[index][2]).replace(".",":").replace("-","") if dataframe.values[index][2]<0.0 else "00:00")
+        data['FES DIU-Negativas'].append(str(dataframe.values[index][3]).replace(".",":").replace("-","") if dataframe.values[index][3]<0.0 else "00:00")
+        data['FES NOC-Negativas'].append(str(dataframe.values[index][4]).replace(".",":").replace("-","") if dataframe.values[index][4]<0.0 else "00:00")
+        index = index + 1
+
+    return data
+
+def add_novs_turns(result,names,days,novelty):
+    nam_index = aux_m.name_index(names,novelty.GuardCausa)
+    day_index = aux_m.day_index(days,novelty.get_day_start())
+    nam_index2 = -1
+    cod = novelty.get_nov_cod()
+    if cod == 1:
+        nam_index2 = aux_m.name_index(names,novelty.GuardCubre)
+    if cod == 0:
+        nam_index2 = -2
+    if nam_index < 0 and nam_index2==-1:
+        return False
+
+    index = 0
+    var_days = int(novelty.get_day_end())-int(novelty.get_day_start())
+
+    while index <= var_days:
+        result['rows'].append(nam_index)
+        result['columns'].append(day_index)
+        result['data'].append(novelty.get_nov_str())
+        if cod == 1:
+            result['rows'].append(nam_index2)
+            result['columns'].append(day_index)
+            result['data'].append("C-"+novelty.get_nov_str())
+        day_index = day_index+1
+        index = index + 1
+    return True
+
+def generate_file_turns(dataframe,novelties):
+    result = {'columns':[],'rows':[],'data':[]}
+    names = dataframe.get("ADMINISTRATIVOS").tolist()
+    days = dataframe.columns.tolist()
+    for novelty in novelties:
+        add_novs_turns(result,names,days,novelty)
+    return result
