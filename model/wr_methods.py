@@ -106,15 +106,15 @@ def final_data(dataframe):
     data['Nombre']=names
     index=0
     for name in names:
-        data['H DIU-Positivas'].append(str(dataframe.values[index][1]).replace(".",":") if dataframe.values[index][1]>0.0 else "00:00")
-        data['H NOC-Positivas'].append(str(dataframe.values[index][2]).replace(".",":") if dataframe.values[index][2]>0.0 else "00:00")
-        data['FES DIU-Positivas'].append(str(dataframe.values[index][3]).replace(".",":") if dataframe.values[index][3]>0.0 else "00:00")
-        data['FES NOC-Positivas'].append(str(dataframe.values[index][4]).replace(".",":") if dataframe.values[index][4]>0.0 else "00:00")
+        data['H DIU-Positivas'].append(str("%.2f"%dataframe.values[index][1]).replace(".",":") if dataframe.values[index][1]>0.0 else "00:00")
+        data['H NOC-Positivas'].append(str("%.2f"%dataframe.values[index][2]).replace(".",":") if dataframe.values[index][2]>0.0 else "00:00")
+        data['FES DIU-Positivas'].append(str("%.2f"%dataframe.values[index][3]).replace(".",":") if dataframe.values[index][3]>0.0 else "00:00")
+        data['FES NOC-Positivas'].append(str("%.2f"%dataframe.values[index][4]).replace(".",":") if dataframe.values[index][4]>0.0 else "00:00")
         data['--'].append("--")
-        data['H DIU-Negativas'].append(str(dataframe.values[index][1]).replace(".",":").replace("-","") if dataframe.values[index][1]<0.0 else "00:00")
-        data['H NOC-Negativas'].append(str(dataframe.values[index][2]).replace(".",":").replace("-","") if dataframe.values[index][2]<0.0 else "00:00")
-        data['FES DIU-Negativas'].append(str(dataframe.values[index][3]).replace(".",":").replace("-","") if dataframe.values[index][3]<0.0 else "00:00")
-        data['FES NOC-Negativas'].append(str(dataframe.values[index][4]).replace(".",":").replace("-","") if dataframe.values[index][4]<0.0 else "00:00")
+        data['H DIU-Negativas'].append(str("%.2f"%dataframe.values[index][1]).replace(".",":").replace("-","") if dataframe.values[index][1]<0.0 else "00:00")
+        data['H NOC-Negativas'].append(str("%.2f"%dataframe.values[index][2]).replace(".",":").replace("-","") if dataframe.values[index][2]<0.0 else "00:00")
+        data['FES DIU-Negativas'].append(str("%.2f"%dataframe.values[index][3]).replace(".",":").replace("-","") if dataframe.values[index][3]<0.0 else "00:00")
+        data['FES NOC-Negativas'].append(str("%.2f"%dataframe.values[index][4]).replace(".",":").replace("-","") if dataframe.values[index][4]<0.0 else "00:00")
         index = index + 1
 
     return data
