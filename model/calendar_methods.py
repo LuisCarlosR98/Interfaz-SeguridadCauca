@@ -24,9 +24,10 @@ def limit_hour(hours_date):
     hours = float(hours_date[0:2])
     minuts = float(hours_date[3:5])
     presicion = 0
+    hours_aux = hours
     #controla la presicion en los minutos
     if minuts >= 15:
-        hours += 1
+        hours_aux = hours + 1
     if minuts >= 15 and minuts < 30:
         presicion = 0.45
     if minuts >= 30 and minuts < 45:
@@ -35,12 +36,12 @@ def limit_hour(hours_date):
         presicion = 0.15
     #obtiene el limite de horas mas la presicion
     if hours >= 6 and hours < 21:
-        return (21-hours)+presicion
+        return (21-hours_aux)+presicion
     else:
         if hours >= 21:
-            return (24-hours)+presicion
+            return (24-hours_aux)+presicion
         if hours >= 0 and hours < 6:
-            return (6-hours)+presicion
+            return (6-hours_aux)+presicion
 
 
 #si hay cambio de mes
@@ -69,56 +70,41 @@ def index_cad(cad, palabra):
         indice += 1
     return -1
 
-#suma de minutos
-def sum_minuts(min1,min2):
-    if min1+min2 < 60:
-        res = "0."+str((min1 + min2))
-        return float(res)
-    else:
-        res = "1."+str((min1 + min2)-60)
-        return float(res)
-
-#reta de minutos
-def res_minuts(min1,min2):
-    if min1 - min2 >= 0:
-        res = "0."+str((min1 - min2))
-        return float(res)
-    else:
-        res = "1."+str((min1 - min2)+60)
-        return float(res)
-
 #cod = 0 SUMA cod = 1 RESTA
 def add_hour(hour1,hour2,cod):
     index = index_cad(".",str(hour1))
     hr1_hr = int(str(hour1)[:index])
-    hr1_mt = int(str(hour1)[index+1:])
+    hr1_mt = int(str(hour1)[index+1:]) if int(str(hour1)[index+1:])>9 else int(str(hour1)[index+1:])*10
     index = index_cad(".",str(hour2))
     hr2_hr = int(str(hour2)[:index])
-    hr2_mt = int(str(hour2)[index+1:])
-
+    hr2_mt = int(str(hour2)[index+1:]) if int(str(hour2)[index+1:])>9 else int(str(hour2)[index+1:])*10
     hour = 0
     minuts = 0
 
     #suma hora1 + hora2
     if cod==0:
-        #sumamos los minutos
-        min=sum_minuts(hr1_mt,hr2_mt)
-        return (hr1_hr + hr2_hr) + min
+        if hour1<0:
+            if hour1+hour2>0:
+                 return add_hour(hour2,(-hour1),1)
+            else:
+                minuts = hr1_mt-hr2_mt if hr1_mt>=hr2_mt else (hr1_mt+60)-hr2_mt
+                hour = hr1_hr+hr2_hr if hr1_mt>=hr2_mt else (hr1_hr+1)+hr2_hr
+                return float(str(hour)+'.'+str(minuts)) if float(str(hour)+'.'+str(minuts))<=0 else float('-'+str(hour)+'.'+str(minuts))
+
+        minuts = hr1_mt+hr2_mt if (hr1_mt+hr2_mt)/60<1 else (hr1_mt+hr2_mt)%60
+        hour = hr1_hr+hr2_hr if (hr1_mt+hr2_mt)/60<1 else hr1_hr+hr2_hr+1
+        return float(str(hour)+"."+str(minuts))
     #resta hora1-hora2
     else:
-        if hour1==0.0:
-            return -hour2
         if hour1<0:
             return -(add_hour(-hour1,hour2,0))
-        #restamos los minutos
-        hr = (hr1_hr-hr2_hr)
-        res = res_minuts(hr1_mt,hr2_mt)
+        if hour1<hour2:
+            return -add_hour(hour2,hour1,1)
 
-        if res < 1.0:
-            return (hr1_hr-hr2_hr) + res
-        else:
-            aux = str(int((hr1_hr-hr2_hr)-1.0))+str(res)[1:]
-            return float(aux)
+        minuts = hr1_mt-hr2_mt if hr1_mt>=hr2_mt else (hr1_mt+60)-hr2_mt
+        hour = hr1_hr-hr2_hr if hr1_mt>=hr2_mt else hr1_hr-hr2_hr-1
+        print(hour1,'-',hour2,'=',str(hour)+'.'+str(minuts))
+        return float(str(hour)+'.'+str(minuts))
 
 #avanzar un dia
 def add_day(day):
@@ -139,8 +125,7 @@ def add_month(month):
     return str(month_aux)
 
 #si hay cambio de dia
-def is_change_day(hours,hours_date):
-    aux = int(hours_date[0:2])
-    if(hours+aux>24):
+def is_change_day(hours_date):
+    if(hours_date>="21:00"):
         return True
     return False

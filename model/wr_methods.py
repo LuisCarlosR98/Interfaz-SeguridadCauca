@@ -25,6 +25,7 @@ def add_hours(person,hours,cod,day,month,hour_date,year):
         return 0
     if aux_m.is_diurnal(hour_date):
         if cl.is_holiday(day,month,year):
+            print(limit,hour_date)
             if(hours<=limit):
                 person.add_H_Fdiunrs(hours,cod)
                 return 0
@@ -48,7 +49,7 @@ def add_hours(person,hours,cod,day,month,hour_date,year):
                 return 0
             person.add_H_nocturns(limit,cod)
 
-        if cl.is_change_day(hours,hour_date):
+        if cl.is_change_day(hour_date):
             if cl.is_end_month(day,month,year):
                 day = "01"
                 month = cl.add_month(month)
@@ -69,7 +70,7 @@ def generate_hours(novelties):
             person = exist_name(novelty.GuardCausa,persons)
             if not person:
                 person = prs.Person(novelty.GuardCausa)
-            add_hours(person,novelty.Horas,1,novelty.get_day_start(),novelty.get_month_end(),novelty.get_hour_date(),novelty.get_year_start())
+            add_hours(person,novelty.Horas,1,novelty.get_day_start(),novelty.get_month_start(),novelty.get_hour_date(),novelty.get_year_start())
             add_person(person,persons)
 
         #Novedad con dos actores
@@ -78,7 +79,7 @@ def generate_hours(novelties):
             person = exist_name(novelty.GuardCausa,persons)
             if not person:
                 person = prs.Person(novelty.GuardCausa)
-            add_hours(person,novelty.Horas,0,novelty.get_day_start(),novelty.get_month_end(),novelty.get_hour_date(),novelty.get_year_start())
+            add_hours(person,novelty.Horas,0,novelty.get_day_start(),novelty.get_month_start(),novelty.get_hour_date(),novelty.get_year_start())
             add_person(person,persons)
 
             #actor que suma
@@ -105,7 +106,6 @@ def final_data(dataframe):
     data['Nombre']=names
     index=0
     for name in names:
-        print(dataframe.values[index][1])
         data['H DIU-Positivas'].append(str(dataframe.values[index][1]).replace(".",":") if dataframe.values[index][1]>0.0 else "00:00")
         data['H NOC-Positivas'].append(str(dataframe.values[index][2]).replace(".",":") if dataframe.values[index][2]>0.0 else "00:00")
         data['FES DIU-Positivas'].append(str(dataframe.values[index][3]).replace(".",":") if dataframe.values[index][3]>0.0 else "00:00")

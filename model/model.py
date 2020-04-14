@@ -47,7 +47,6 @@ class Model:
         dataframe = self.read_turns(sheetName)
         #diccionario con los datos y las posiciones de las horas_novedades
         dic = wr.generate_file_turns(dataframe,self.novelties)
-        print(dic)
         columns = dic['columns']
         rows = dic['rows']
         data = dic['data']
@@ -76,7 +75,6 @@ class Model:
             wb = fl.create_dataFrame(data)
             data2 = wr.final_data(wb)
             wb2 = fl.create_dataFrame(data2)
-            print(wb2)
             #guarda el dataframe en formato excel
             return fl.write_file_dataframe(path,"horas_novedades",wb2)
 

@@ -17,13 +17,14 @@ def day_index(columns,day):
         return -1
 
 def rls_novelty(novelty):
-    if(novelty=="Ausencia"):
+    novelty = novelty.lower()
+    if(novelty=="ausencia"):
         return [1,"AU"]
-    if(novelty=="Tiempo Extra"):
+    if(novelty=="tiempo extra"):
         return [0,"TE"]
-    if(novelty=="Incapacidad"):
+    if(novelty=="incapacidad"):
         return [1,"IC"]
-    if(novelty=="Salida antes"):
+    if(novelty=="salida antes"):
         return [1,"SA"]
 
 def is_diurnal(hour):
